@@ -1,10 +1,10 @@
 const items = [
-	"22 декабря долг Никита",
-	"Купить подарки",
-	"Зачёт по ЭВМ",
-	"Погулять с собакой",
-	"Поспать",
-	"Покушать",
+	"Сделать проектную работу",
+  "Полить цветы",
+  "Пройти туториал по Реакту",
+  "Сделать фронт для своего проекта",
+  "Прогуляться по улице в солнечный день",
+  "Помыть посуду",
 ];
 
 const listElement = document.querySelector(".to-do__list");
@@ -12,68 +12,69 @@ const formElement = document.querySelector(".to-do__form");
 const inputElement = document.querySelector(".to-do__input");
 
 function loadTasks() {
-	const data = localStorage.getItem("tasks");
-	return data ? JSON.parse(data) : items;
+  const data = localStorage.getItem("tasks");
+  return data ? JSON.parse(data) : items;
 }
 
 function createItem(item) {
-	const template = document.getElementById("to-do__item-template");
-	const clone = template.content.querySelector(".to-do__item").cloneNode(true);
-	const textElement = clone.querySelector(".to-do__item-text");
-	const deleteButton = clone.querySelector(".to-do__item-button_type_delete");
-	const duplicateButton = clone.querySelector(".to-do__item-button_type_duplicate");
-	const editButton = clone.querySelector(".to-do__item-button_type_edit");
+  const template = document.getElementById("to-do__item-template");
+  const clone = template.content.querySelector(".to-do__item").cloneNode(true);
+  const textElement = clone.querySelector(".to-do__item-text");
+  const deleteButton = clone.querySelector(".to-do__item-button_type_delete");
+  const duplicateButton = clone.querySelector(".to-do__item-button_type_duplicate");
+  const editButton = clone.querySelector(".to-do__item-button_type_edit");
 
-	textElement.textContent = item;
+  textElement.textContent = item;
 
-	editButton.onclick = () => {
-		textElement.contentEditable = true;
-		textElement.focus();
-	};
+  editButton.onclick = () => {
+    textElement.contentEditable = true;
+    textElement.focus();
+  };
 
-	textElement.onblur = () => {
-		textElement.contentEditable = false;
-		saveTasks(getTasksFromDOM());
-	};
+  textElement.onblur = () => {
+    textElement.contentEditable = false;
+    saveTasks(getTasksFromDOM());
+  };
 
-	textElement.onkeydown = e => {
-		if (e.key === "Enter") {
-			e.preventDefault();
-			textElement.blur();
-		}
-	};
+  textElement.onkeydown = e => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      textElement.blur();
+    }
+  };
 
-	deleteButton.onclick = () => {
-		clone.remove();
-		saveTasks(getTasksFromDOM());
-	};
+  deleteButton.onclick = () => {
+    clone.remove();
+    saveTasks(getTasksFromDOM());
+  };
 
-	duplicateButton.onclick = () => {
-		const newItem = createItem(textElement.textContent);
-		listElement.prepend(newItem);
-		saveTasks(getTasksFromDOM());
-	};
+  duplicateButton.onclick = () => {
+    const newItem = createItem(textElement.textContent);
+    listElement.prepend(newItem);
+    saveTasks(getTasksFromDOM());
+  };
 
-	return clone;
+  return clone;
 }
-
+//считываем актул задачи
 function getTasksFromDOM() {
-	return [...listElement.querySelectorAll(".to-do__item-text")].map(el => el.textContent);
+  return [...listElement.querySelectorAll(".to-do__item-text")].map(el => el.textContent);
 }
 
+//массив задач делаем под ключ tasks
 function saveTasks(tasks) {
-	localStorage.setItem("tasks", JSON.stringify(tasks));
+  localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
 items = loadTasks();
-items.forEach(item => listElement.append(createItem(item)));
+items.forEach(item => listElement.prepend(createItem(item)));
 
 formElement.addEventListener("submit", e => {
-	e.preventDefault();
-	const value = inputElement.value.trim();
-	if (value) {
-		listElement.prepend(createItem(value));
-		saveTasks(getTasksFromDOM());
-		inputElement.value = "";
-	}
+  e.preventDefault();
+  const value = inputElement.value.trim();
+  if (value) {
+    listElement.prepend(createItem(value));
+    saveTasks(getTasksFromDOM());
+    inputElement.value = "";
+  }
 });
